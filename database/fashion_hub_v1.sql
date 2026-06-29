@@ -1,0 +1,182 @@
+-- FashionHub Database
+-- Version 1.0
+-- Initial schema
+
+DROP DATABASE IF EXISTS fashion_hub;
+
+CREATE DATABASE fashion_hub;
+
+USE fashion_hub;
+
+CREATE TABLE users (
+id BIGINT AUTO_INCREMENT PRIMARY KEY,
+
+username VARCHAR(28) UNIQUE NOT NULL,
+email VARCHAR(120) UNIQUE NOT NULL,
+password_hash VARCHAR(255) NOT NULL,
+
+role ENUM('USER', 'ADMIN') NOT NULL DEFAULT 'USER',
+
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE business (
+id BIGINT AUTO_INCREMENT PRIMARY KEY,
+
+name VARCHAR(80) UNIQUE NOT NULL,
+
+description TEXT,
+logo VARCHAR(255),
+website VARCHAR(255),
+
+created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE business_location (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+
+    business_id BIGINT NOT NULL,
+
+    name VARCHAR(60),
+    address VARCHAR(255) NOT NULL,
+
+    opening_time TIME,
+    closing_time TIME,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (business_id) REFERENCES business(id) ON DELETE CASCADE
+);
+
+CREATE TABLE business_contact (
+id BIGINT AUTO_INCREMENT PRIMARY KEY,
+
+business_id BIGINT NOT NULL,
+
+type VARCHAR(30) NOT NULL,
+value VARCHAR(255) NOT NULL,
+
+created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+FOREIGN KEY (business_id) REFERENCES business(id) ON DELETE CASCADE
+);
+
+CREATE TABLE product_category (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+
+    name VARCHAR(40) UNIQUE NOT NULL,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE product (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+
+    business_id BIGINT NOT NULL,
+    category_id BIGINT NOT NULL,
+
+    name VARCHAR(80) NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
+    
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+
+    gender ENUM('MEN', 'WOMEN', 'UNISEX') NOT NULL,
+
+    description TEXT,
+    material VARCHAR(80),
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (business_id) REFERENCES business(id) ON DELETE CASCADE,
+    FOREIGN KEY (category_id) REFERENCES product_category(id)
+);
+
+CREATE TABLE product_image (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+
+    product_id BIGINT NOT NULL,
+
+    image_url VARCHAR(255) NOT NULL,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (product_id) REFERENCES product(id) ON DELETE CASCADE
+);
+
+CREATE TABLE product_variant (
+id BIGINT AUTO_INCREMENT PRIMARY KEY,
+
+product_id BIGINT NOT NULL,
+
+color VARCHAR(40),
+size VARCHAR(10),
+
+stock_status ENUM('IN', 'LOW', 'OUT') NOT NULL DEFAULT 'IN',
+
+FOREIGN KEY (product_id) REFERENCES product(id) ON DELETE CASCADE
+);
+
+CREATE TABLE saved_item (
+id BIGINT AUTO_INCREMENT PRIMARY KEY,
+
+user_id BIGINT NOT NULL,
+product_id BIGINT NOT NULL,
+
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+UNIQUE(user_id, product_id),
+
+FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+FOREIGN KEY (product_id) REFERENCES product(id) ON DELETE CASCADE
+);
+
+CREATE TABLE business_follow (
+id BIGINT AUTO_INCREMENT PRIMARY KEY,
+
+user_id BIGINT NOT NULL,
+business_id BIGINT NOT NULL,
+
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+UNIQUE (user_id, business_id),
+
+FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+FOREIGN KEY (business_id) REFERENCES business(id) ON DELETE CASCADE
+);
+
+CREATE TABLE review (
+id BIGINT AUTO_INCREMENT PRIMARY KEY,
+
+user_id BIGINT NOT NULL,
+business_id BIGINT NOT NULL,
+
+rating INT NOT NULL,
+comment TEXT,
+
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+UNIQUE (user_id, business_id),
+CHECK (rating BETWEEN 1 AND 5),
+
+FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+FOREIGN KEY (business_id) REFERENCES business(id) ON DELETE CASCADE
+);
+
+CREATE TABLE notification (
+id BIGINT AUTO_INCREMENT PRIMARY KEY,
+
+user_id BIGINT NOT NULL,
+
+type ENUM('STOCK_OUT', 'PRICE_CHANGE') NOT NULL,
+
+message VARCHAR(255) NOT NULL,
+
+is_read BOOLEAN NOT NULL DEFAULT FALSE,
+
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+SHOW TABLES;
