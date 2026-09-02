@@ -106,6 +106,6 @@ public class UserService {
         response.setRole(u.getRole());
         response.setCreatedAt(u.getCreatedAt());
 
-        return u;
+        return response;
     }
 }
