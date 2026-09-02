@@ -3,7 +3,6 @@ package com.fashionhub.fashionhub.controller;
 import com.fashionhub.fashionhub.dto.request.UsuarioCreateDTO;
 import com.fashionhub.fashionhub.dto.request.UsuarioUpdateDTO;
 import com.fashionhub.fashionhub.dto.response.UsuarioResponseDTO;
-import com.fashionhub.fashionhub.model.User;
 import com.fashionhub.fashionhub.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
