@@ -79,8 +79,9 @@ public class UserService {
 
         usuario.setUsername(u.getUsername());
         usuario.setEmail(u.getEmail());
-        usuario.setPasswordHash(passwordEncoder.encode(u.getPassword()));
-
+        if (u.getPassword() != null && !u.getPassword().isBlank()) {
+            usuario.setPasswordHash(passwordEncoder.encode(u.getPassword()));
+        }
         userRepository.save(usuario);
 
         UsuarioResponseDTO response = new UsuarioResponseDTO();
@@ -94,9 +95,17 @@ public class UserService {
         return response;
     }
 
-    public User deleteUser(Long id){
+    public UsuarioResponseDTO deleteUser(Long id){
         User u = userRepository.findById(id).orElseThrow(() -> new UserInexistenteException("Usuario inexistente"));
         userRepository.delete(u);
+        UsuarioResponseDTO response = new UsuarioResponseDTO();
+
+        response.setId(u.getId());
+        response.setUsername(u.getUsername());
+        response.setEmail(u.getEmail());
+        response.setRole(u.getRole());
+        response.setCreatedAt(u.getCreatedAt());
+
         return u;
     }
 }
