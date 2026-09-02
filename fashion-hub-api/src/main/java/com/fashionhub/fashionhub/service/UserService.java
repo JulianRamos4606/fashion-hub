@@ -1,6 +1,7 @@
 package com.fashionhub.fashionhub.service;
 
 import com.fashionhub.fashionhub.dto.request.UsuarioCreateDTO;
+import com.fashionhub.fashionhub.dto.request.UsuarioUpdateDTO;
 import com.fashionhub.fashionhub.dto.response.UsuarioResponseDTO;
 import com.fashionhub.fashionhub.enums.Role;
 import com.fashionhub.fashionhub.exception.UserInexistenteException;
@@ -24,43 +25,73 @@ public class UserService {
     public UsuarioResponseDTO save(UsuarioCreateDTO userDTO){
         User newUser = new User();
 
-        newUser.setUsername(userDTO.getUser());
+        newUser.setUsername(userDTO.getUsername());
         newUser.setEmail(userDTO.getEmail());
         newUser.setPasswordHash(
                 passwordEncoder.encode(userDTO.getPassword())
         );
         newUser.setRole(Role.USER);
 
-        userRepository.save(newUser);
+        User savedUser = userRepository.save(newUser);
 
         UsuarioResponseDTO response = new UsuarioResponseDTO();
 
-        response.setId(newUser.getId());
-        response.setUsername(newUser.getUsername());
-        response.setEmail(newUser.getEmail());
-        response.setRole(newUser.getRole());
-        response.setCreatedAt(newUser.getCreatedAt());
+        response.setId(savedUser.getId());
+        response.setUsername(savedUser.getUsername());
+        response.setEmail(savedUser.getEmail());
+        response.setRole(savedUser.getRole());
+        response.setCreatedAt(savedUser.getCreatedAt());
 
         return response;
     }
 
-    public List<User> listAll(){
-        return userRepository.findAll();
+    public List<UsuarioResponseDTO> listAll(){
+        return userRepository.findAll().stream().map(user -> {
+            UsuarioResponseDTO response = new UsuarioResponseDTO();
+
+            response.setId(user.getId());
+            response.setUsername(user.getUsername());
+            response.setEmail(user.getEmail());
+            response.setRole(user.getRole());
+            response.setCreatedAt(user.getCreatedAt());
+
+            return response;
+        }).toList();
     }
 
-    public User listById(Long id){
-        return userRepository.findById(id).orElseThrow(() -> new UserInexistenteException("Usuario inexistente"));
+    public UsuarioResponseDTO listById(Long id){
+        User usuario = userRepository.findById(id).orElseThrow(() -> new UserInexistenteException("Usuario inexistente"));
+
+        UsuarioResponseDTO response = new UsuarioResponseDTO();
+
+        response.setId(usuario.getId());
+        response.setUsername(usuario.getUsername());
+        response.setEmail(usuario.getEmail());
+        response.setRole(usuario.getRole());
+        response.setCreatedAt(usuario.getCreatedAt());
+
+        return response;
     }
 
     @Transactional
-    public User updateUser(Long id, User u){
+    public UsuarioResponseDTO updateUser(Long id, UsuarioUpdateDTO u){
         User usuario = userRepository.findById(id).orElseThrow(() -> new UserInexistenteException("Usuario inexistente"));
 
-        usuario.setEmail(u.getEmail());
         usuario.setUsername(u.getUsername());
-        usuario.setPasswordHash(u.getPasswordHash());
+        usuario.setEmail(u.getEmail());
+        usuario.setPasswordHash(passwordEncoder.encode(u.getPassword()));
 
-        return userRepository.save(usuario);
+        userRepository.save(usuario);
+
+        UsuarioResponseDTO response = new UsuarioResponseDTO();
+
+        response.setId(usuario.getId());
+        response.setUsername(usuario.getUsername());
+        response.setEmail(usuario.getEmail());
+        response.setRole(usuario.getRole());
+        response.setCreatedAt(usuario.getCreatedAt());
+
+        return response;
     }
 
     public User deleteUser(Long id){

@@ -1,14 +1,18 @@
 package com.fashionhub.fashionhub.dto.request;
 
-public class UsuarioCreateDTO {
+public class UsuarioUpdateDTO {
+
     private String username;
     private String email;
     private String password;
 
-    public UsuarioCreateDTO(String username, String email, String password) {
+    public UsuarioUpdateDTO(String username, String email, String password) {
         this.username = username;
         this.email = email;
         this.password = password;
+    }
+
+    public UsuarioUpdateDTO() {
     }
 
     public String getUsername() {
