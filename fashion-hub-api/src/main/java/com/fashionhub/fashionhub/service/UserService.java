@@ -88,6 +88,13 @@ public class UserService {
     public UsuarioResponseDTO updateUser(Long id, UsuarioUpdateDTO u){
         User usuario = userRepository.findById(id).orElseThrow(() -> new UserInexistenteException("Usuario inexistente"));
 
+        if (userRepository.existsByUsernameAndIdNot(u.getUsername(), id)){
+            throw new UsernameExistenteException("ya existe este nombre de usuario");
+        }
+        if(userRepository.existsByEmailAndIdNot(u.getEmail(), id)){
+            throw new EmailExistenteException("ya hay una cuenta asociada a este email");
+        }
+
         usuario.setUsername(u.getUsername());
         usuario.setEmail(u.getEmail());
         if (u.getPassword() != null && !u.getPassword().isBlank()) {
