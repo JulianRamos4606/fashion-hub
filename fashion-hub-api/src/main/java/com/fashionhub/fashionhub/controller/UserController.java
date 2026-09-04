@@ -4,6 +4,7 @@ import com.fashionhub.fashionhub.dto.request.UsuarioCreateDTO;
 import com.fashionhub.fashionhub.dto.request.UsuarioUpdateDTO;
 import com.fashionhub.fashionhub.dto.response.UsuarioResponseDTO;
 import com.fashionhub.fashionhub.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +18,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public UsuarioResponseDTO save(@RequestBody UsuarioCreateDTO request){
+    public UsuarioResponseDTO save(@Valid @RequestBody UsuarioCreateDTO request){
         return userService.save(request);
     }
 

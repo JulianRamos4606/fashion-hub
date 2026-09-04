@@ -4,7 +4,9 @@ import com.fashionhub.fashionhub.dto.request.UsuarioCreateDTO;
 import com.fashionhub.fashionhub.dto.request.UsuarioUpdateDTO;
 import com.fashionhub.fashionhub.dto.response.UsuarioResponseDTO;
 import com.fashionhub.fashionhub.enums.Role;
+import com.fashionhub.fashionhub.exception.EmailExistenteException;
 import com.fashionhub.fashionhub.exception.UserInexistenteException;
+import com.fashionhub.fashionhub.exception.UsernameExistenteException;
 import com.fashionhub.fashionhub.model.User;
 import com.fashionhub.fashionhub.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -13,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.zip.DataFormatException;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +26,14 @@ public class UserService {
 
 
     public UsuarioResponseDTO save(UsuarioCreateDTO userDTO){
+
+        if (userRepository.existsByUsername(userDTO.getUsername())){
+            throw new UsernameExistenteException("ya existe este nombre de usuario");
+        }
+        if (userRepository.existsByEmail(userDTO.getEmail())){
+            throw new EmailExistenteException("ya hay una cuenta asociada a este email");
+        }
+
         User newUser = new User();
 
         newUser.setUsername(userDTO.getUsername());

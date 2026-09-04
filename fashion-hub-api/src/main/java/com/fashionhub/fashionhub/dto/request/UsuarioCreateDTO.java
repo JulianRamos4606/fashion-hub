@@ -1,8 +1,18 @@
 package com.fashionhub.fashionhub.dto.request;
 
+import jakarta.persistence.Column;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 public class UsuarioCreateDTO {
+    @Column(nullable = false, unique = true, length = 28)
     private String username;
+
+    @Column(nullable = false, unique = true, length = 120)
     private String email;
+
+    @Column(nullable = false, length = 100)
     private String password;
 
     public UsuarioCreateDTO(String username, String email, String password) {
