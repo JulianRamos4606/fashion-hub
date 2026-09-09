@@ -180,3 +180,4 @@ FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 SHOW TABLES;
+select * from users;
