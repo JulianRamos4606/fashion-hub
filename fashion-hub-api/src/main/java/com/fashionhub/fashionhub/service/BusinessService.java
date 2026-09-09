@@ -42,6 +42,7 @@ public class BusinessService {
         response.setLogo(savedBusiness.getLogo());
         response.setWebsite(savedBusiness.getWebsite());
         response.setDescripcion(savedBusiness.getDescription());
+        response.setId(savedBusiness.getId());
 
         return response;
     }
@@ -55,6 +56,7 @@ public class BusinessService {
         response.setLogo(business.getLogo());
         response.setWebsite(business.getWebsite());
         response.setDescripcion(business.getDescription());
+        response.setId(business.getId());
 
         return response;
     }
@@ -63,6 +65,7 @@ public class BusinessService {
         return businessRepository.findAll().stream().map( business -> {
             BusinessResponseDTO response = new BusinessResponseDTO();
 
+            response.setId(business.getId());
             response.setName(business.getName());
             response.setDescripcion(business.getDescription());
             response.setWebsite(business.getWebsite());
@@ -79,6 +82,7 @@ public class BusinessService {
 
         BusinessResponseDTO response = new BusinessResponseDTO();
 
+        response.setId(b.getId());
         response.setName(b.getName());
         response.setDescripcion(b.getDescription());
         response.setLogo(b.getLogo());

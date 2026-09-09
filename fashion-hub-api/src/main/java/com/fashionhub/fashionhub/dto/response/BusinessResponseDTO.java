@@ -12,6 +12,8 @@ import lombok.Setter;
 @Setter
 public class BusinessResponseDTO {
 
+    private Long id;
+
     @Column(nullable = false, unique = true, length = 50)
     private String name;
 
@@ -24,8 +26,5 @@ public class BusinessResponseDTO {
     @Column(nullable = true)
     private String website;
 
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
 }
 
