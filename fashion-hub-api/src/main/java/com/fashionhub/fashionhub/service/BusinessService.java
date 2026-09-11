@@ -1,12 +1,14 @@
 package com.fashionhub.fashionhub.service;
 
 import com.fashionhub.fashionhub.dto.request.BusinessCreateDTO;
+import com.fashionhub.fashionhub.dto.request.BusinessUpdateDTO;
 import com.fashionhub.fashionhub.dto.response.BusinessResponseDTO;
 import com.fashionhub.fashionhub.exception.BusinessNameExists;
 import com.fashionhub.fashionhub.exception.BusinessNotFound;
 import com.fashionhub.fashionhub.exception.BusinessWebsiteAlreadyExists;
 import com.fashionhub.fashionhub.model.Business;
 import com.fashionhub.fashionhub.repository.BusinessRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -91,7 +93,34 @@ public class BusinessService {
         return response;
     }
 
+    @Transactional
+    public BusinessResponseDTO update(Long id, BusinessUpdateDTO businessUDTO){
+        Business business = businessRepository.findById(id).orElseThrow(() -> new BusinessNotFound("No se ha encontrado ningun local"));
 
+        if(businessRepository.existsByWebsiteAndIdNot(businessUDTO.getWebsite(), id)){
+            throw new BusinessWebsiteAlreadyExists("Ya existe un website con este mismo website");
+        }
+
+        if(businessRepository.existsByNameAndIdNot(businessUDTO.getName(), id)){
+            throw new BusinessNameExists("Ya esxiste un business con este nombre");
+        }
+
+        business.setName(businessUDTO.getName());
+        business.setWebsite(businessUDTO.getWebsite());
+        business.setDescription(businessUDTO.getDescripcion());
+        business.setLogo(businessUDTO.getLogo());
+
+        Business savedBusiness = businessRepository.save(business);
+
+        BusinessResponseDTO response = new BusinessResponseDTO();
+
+        response.setName(savedBusiness.getName());
+        response.setWebsite(savedBusiness.getWebsite());
+        response.setLogo(savedBusiness.getLogo());
+        response.setDescripcion(savedBusiness.getDescription());
+
+        return response;
+    }
 
 
 }
